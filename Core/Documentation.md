@@ -63,6 +63,11 @@ Checks the server library version of the context for a minimally required versio
 > ##### Return value
 > 
 
+#### GetCoreVersionTag
+Get's a tag that identifies the PnP Core library
+> ##### Return value
+> PnP Core library identification tag
+
 ## SharePoint.Client.ClientContextExtensions.MaximumRetryAttemptedException
             
 Defines a Maximum Retry Attemped Exception
@@ -733,6 +738,14 @@ Field exists in content type
 > ##### Return value
 > True if exists, false otherwise
 
+#### SetJsLinkCustomizations(Microsoft.SharePoint.Client.Field,System.String)
+Adds jsLink to a field.
+> ##### Parameters
+> **field:** The field to add jsLink to
+
+> **jsLink:** JSLink to set to the form. Set to empty string to remove the set JSLink customization. Specify multiple values separated by pipe symbol. For e.g.: ~sitecollection/_catalogs/masterpage/jquery-2.1.0.min.js|~sitecollection/_catalogs/masterpage/custom.js
+
+
 #### CreateField(Microsoft.SharePoint.Client.List,OfficeDevPnP.Core.Entities.FieldCreationInformation,System.Boolean)
 Adds field to a list
 > ##### Parameters
@@ -829,6 +842,16 @@ Gets a list of fields from a list by names.
 > ##### Return value
 > List of fields requested.
 
+#### SetJsLinkCustomizations(Microsoft.SharePoint.Client.List,System.String,System.String)
+Adds jsLink to a list field.
+> ##### Parameters
+> **list:** The list where the field exists.
+
+> **fieldName:** The field to add jsLink to.
+
+> **jsLink:** JSLink to set to the form. Set to empty string to remove the set JSLink customization. Specify multiple values separated by pipe symbol. For e.g.: ~sitecollection/_catalogs/masterpage/jquery-2.1.0.min.js|~sitecollection/_catalogs/masterpage/custom.js
+
+
 #### ParseAdditionalAttributes(System.String)
 Helper method to parse Key="Value" strings into a keyvaluepair
 > ##### Parameters
@@ -909,6 +932,42 @@ Add content type to list
 > **contentType:** Content type to add to the list
 
 > **defaultContent:** If set true, content type is updated to be default content type for the list
+
+
+#### AddFieldById(Microsoft.SharePoint.Client.ContentType,System.String,System.Boolean,System.Boolean)
+Associates field to content type
+> ##### Parameters
+> **contentType:** Content Type to add the field to
+
+> **fieldId:** String representation of the id of the field (=Guid)
+
+> **required:** True if the field is required
+
+> **hidden:** True if the field is hidden
+
+
+#### AddFieldById(Microsoft.SharePoint.Client.ContentType,System.Guid,System.Boolean,System.Boolean)
+Associates field to content type
+> ##### Parameters
+> **contentType:** Content Type to add the field to
+
+> **fieldId:** The Id of the field
+
+> **required:** True if the field is required
+
+> **hidden:** True if the field is hidden
+
+
+#### AddFieldByName(Microsoft.SharePoint.Client.ContentType,System.String,System.Boolean,System.Boolean)
+Associates field to content type
+> ##### Parameters
+> **contentType:** Content Type to add the field to
+
+> **fieldName:** The title or internal name of the field
+
+> **required:** True if the field is required
+
+> **hidden:** True if the field is hidden
 
 
 #### AddFieldToContentTypeById(Microsoft.SharePoint.Client.Web,System.String,System.String,System.Boolean,System.Boolean)
@@ -2442,6 +2501,26 @@ Updates navigation settings for the current web
 > **navigationSettings:** 
 
 
+#### GetEditableNavigationTermSet(Microsoft.SharePoint.Client.Web,Microsoft.SharePoint.Client.ManagedNavigationKind)
+Returns an editable version of the Global Navigation TermSet for a web site
+> ##### Parameters
+> **web:** The target web.
+
+> **navigationKind:** Declares whether to look for Current or Global Navigation
+
+> ##### Return value
+> The editable Global Navigation TermSet
+
+#### IsManagedNavigationEnabled(Microsoft.SharePoint.Client.Web,Microsoft.SharePoint.Client.ManagedNavigationKind)
+Determines whether the current Web has the managed navigation enabled
+> ##### Parameters
+> **web:** The target web.
+
+> **navigationKind:** The kind of navigation (Current or Global).
+
+> ##### Return value
+> A boolean result of the test.
+
 #### AddNavigationNode(Microsoft.SharePoint.Client.Web,System.String,System.Uri,System.String,OfficeDevPnP.Core.Enums.NavigationType,System.Boolean)
 Add a node to quick launch, top navigation bar or search navigation. The node will be added as the last node in the collection.
 > ##### Parameters
@@ -2931,18 +3010,26 @@ Returns web part properties
 > **System.ArgumentNullException:** Thrown when key or serverRelativePageUrl is null
 
 
-#### AddPublishingPage(Microsoft.SharePoint.Client.Web,System.String,System.String,System.String,System.Boolean)
+#### AddPublishingPage(Microsoft.SharePoint.Client.Web,System.String,System.String,System.String,System.Boolean,Microsoft.SharePoint.Client.Folder,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Boolean)
 Adds the publishing page.
 > ##### Parameters
 > **web:** The web.
 
 > **pageName:** Name of the page.
 
-> **pageTemplateName:** Name of the page template.
+> **pageTemplateName:** Name of the page template/layout excluded the .aspx file extension.
 
-> **title:** The title.
+> **title:** The title of the target publishing page.
 
 > **publish:** Should the page be published or not?
+
+> **folder:** The target folder for the page, within the Pages library.
+
+> **startDate:** Start date for scheduled publishing.
+
+> **endDate:** End date for scheduled publishing.
+
+> **schedule:** Defines whether to define a schedule or not.
 
 > ##### Exceptions
 > **System.ArgumentNullException:** Thrown when key or pageName is a zero-length string or contains only white space
@@ -2950,15 +3037,52 @@ Adds the publishing page.
 > **System.ArgumentException:** Thrown when key or pageName is null
 
 
+#### AddNavigationFriendlyUrl(Microsoft.SharePoint.Client.Publishing.PublishingPage,Microsoft.SharePoint.Client.Web,System.String,System.String,Microsoft.SharePoint.Client.Publishing.Navigation.NavigationTermSetItem,System.Boolean,System.Boolean)
+Adds a user-friendly URL for a PublishingPage object.
+> ##### Parameters
+> **page:** The target page to add to managed navigation.
+
+> **web:** The target web.
+
+> **navigationTitle:** The title for the navigation item.
+
+> **friendlyUrlSegment:** The user-friendly text to use as the URL segment.
+
+> **editableParent:** The parent NavigationTermSetItem object below which this new friendly URL should be created.
+
+> **showInGlobalNavigation:** Defines whether the navigation item has to be shown in the Global Navigation, optional and default to true.
+
+> **showInCurrentNavigation:** Defines whether the navigation item has to be shown in the Current Navigation, optional and default to true.
+
+> ##### Return value
+> The simple link URL just created.
+
 #### GetPublishingPage(Microsoft.SharePoint.Client.Web,System.String)
-Gets a publishing page.
+Gets a Publishing Page from the root folder of the Pages library.
 > ##### Parameters
 > **web:** The web.
 
 > **fileLeafRef:** The file leaf reference.
 
 > ##### Return value
-> 
+> The PublishingPage object, if any. Otherwise null.
+> ##### Exceptions
+> **System.ArgumentNullException:** fileLeafRef
+
+> **System.ArgumentException:** fileLeafRef
+
+
+#### GetPublishingPage(Microsoft.SharePoint.Client.Web,System.String,Microsoft.SharePoint.Client.Folder)
+Gets a Publishing Page from any folder in the Pages library.
+> ##### Parameters
+> **web:** The web.
+
+> **fileLeafRef:** The file leaf reference.
+
+> **folder:** The folder where to search the page.
+
+> ##### Return value
+> The PublishingPage object, if any. Otherwise null.
 > ##### Exceptions
 > **System.ArgumentNullException:** fileLeafRef
 
@@ -4003,6 +4127,16 @@ Sets a value of a taxonomy field
 > **termGuid:** The id of the term to set
 
 
+#### SetTaxonomyFieldValues(Microsoft.SharePoint.Client.ListItem,System.Guid,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.Guid,System.String}})
+Sets a value of a taxonomy field that supports multiple values
+> ##### Parameters
+> **item:** The item to process
+
+> **fieldId:** The ID of the field to set
+
+> **termValues:** The key and values of terms to set
+
+
 #### CreateTaxonomyField(Microsoft.SharePoint.Client.Web,OfficeDevPnP.Core.Entities.TaxonomyFieldCreationInformation)
 Can be used to create taxonomy field remotely to web.
 > ##### Parameters
@@ -4631,6 +4765,16 @@ Sets a key/value pair in the web property bag
 > **value:** String value for the property bag entry
 
 
+#### SetPropertyBagValue(Microsoft.SharePoint.Client.Web,System.String,System.DateTime)
+Sets a key/value pair in the web property bag
+> ##### Parameters
+> **web:** Web that will hold the property bag entry
+
+> **key:** Key for the property bag entry
+
+> **value:** Datetime value for the property bag entry
+
+
 #### SetPropertyBagValueInternal(Microsoft.SharePoint.Client.Web,System.String,System.Object)
 Sets a key/value pair in the web property bag
 > ##### Parameters
@@ -4661,6 +4805,18 @@ Removes a property bag value
 
 #### GetPropertyBagValueInt(Microsoft.SharePoint.Client.Web,System.String,System.Int32)
 Get int typed property bag value. If does not contain, returns default value.
+> ##### Parameters
+> **web:** Web to read the property bag value from
+
+> **key:** Key of the property bag entry to return
+
+> **defaultValue:** 
+
+> ##### Return value
+> Value of the property bag entry as integer
+
+#### GetPropertyBagValueDateTime(Microsoft.SharePoint.Client.Web,System.String,System.DateTime)
+Get DateTime typed property bag value. If does not contain, returns default value.
 > ##### Parameters
 > **web:** Web to read the property bag value from
 
@@ -5135,6 +5291,17 @@ Add required key/value settings on List Root-Folder
             
 This class will be used to provide access to the right base template configuration
         
+
+## SharePoint.Client.ManagedNavigationKind
+            
+Defines the kind of Managed Navigation for a site
+        
+### Fields
+
+#### Current
+Current Navigation
+#### Global
+Global Navigation
 
 ## Core.AppModelExtensions.VariationExtensions
             
@@ -6193,6 +6360,8 @@ Looks up a localized string similar to Importing term set from file stream..
 Looks up a localized string similar to Term group '{0}' ID ({1}) does not match specified ID ({2})..
 #### TaxonomyExtension_TermSet0Id1DoesNotMatchSpecifiedId2
 Looks up a localized string similar to Term set '{0}' ID ({1}) does not match specified ID ({2})..
+#### TaxonomyExtensions_Field_Is_Not_Multivalues
+Looks up a localized string similar to The taxonomy field {0} does not support multiple values..
 #### TaxonomyExtensions_ImportTermSet_File_path_is_required_
 Looks up a localized string similar to File path is required..
 #### TaxonomyExtensions_ImportTermSetImplementation_Invalid_CSV_format__was_expecting_a_comma_in_the_first__header__line_
@@ -6739,6 +6908,201 @@ Deletes a file from the specified container
 > **container:** Name of the container to delete the file from
 
 
+## Core.Framework.Provisioning.Extensibility.ExtensibilityManager
+            
+Provisioning Framework Component that is used for invoking custom providers during the provisioning process.
+            
+Provisioning Framework Component that is used for invoking custom providers during the provisioning process.
+        
+### Methods
+
+
+#### ExecuteExtensibilityCallOut(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.ExtensibilityHandler,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate)
+Method to Invoke Custom Provisioning Providers. Ensure the ClientContext is not disposed in the custom provider.
+> ##### Parameters
+> **ctx:** Authenticated ClientContext that is passed to the custom provider.
+
+> **handler:** A custom Extensibility Provisioning Provider
+
+> **template:** ProvisioningTemplate that is passed to the custom provider
+
+> ##### Exceptions
+> **OfficeDevPnP.Core.Framework.Provisioning.Extensibility.ExtensiblityPipelineException:** 
+
+> **System.ArgumentException:** Provider.Assembly or Provider.Type is NullOrWhiteSpace>
+
+> **System.ArgumentNullException:** ClientContext is Null>
+
+
+#### ExecuteTokenProviderCallOut(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.Provider,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate)
+Method to Invoke Custom Provisioning Token Providers which implement the IProvisioningExtensibilityTokenProvider interface. Ensure the ClientContext is not disposed in the custom provider.
+> ##### Parameters
+> **ctx:** Authenticated ClientContext that is passed to the custom provider.
+
+> **provider:** A custom Extensibility Provisioning Provider
+
+> **template:** ProvisioningTemplate that is passed to the custom provider
+
+> ##### Exceptions
+> **OfficeDevPnP.Core.Framework.Provisioning.Extensibility.ExtensiblityPipelineException:** 
+
+> **System.ArgumentException:** Provider.Assembly or Provider.Type is NullOrWhiteSpace>
+
+> **System.ArgumentNullException:** ClientContext is Null>
+
+
+#### ExecuteExtensibilityProvisionCallOut(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.ExtensibilityHandler,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate,OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.ProvisioningTemplateApplyingInformation,OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenParser,OfficeDevPnP.Core.Diagnostics.PnPMonitoredScope)
+Ensure the ClientContext is not disposed in the custom provider.
+Method to Invoke Custom Provisioning Handlers.
+> ##### Parameters
+> **ctx:** Authenticated ClientContext that is passed to the custom provider.
+
+> **handler:** A custom Extensibility Provisioning Provider
+
+> **template:** ProvisioningTemplate that is passed to the custom provider
+
+> **applyingInformation:** The Provisioning Template application information object
+
+> **tokenParser:** The Token Parser used by the engine during template provisioning
+
+> **scope:** The PnPMonitoredScope of the current step in the pipeline
+
+> ##### Exceptions
+> **OfficeDevPnP.Core.Framework.Provisioning.Extensibility.ExtensiblityPipelineException:** 
+
+> **System.ArgumentException:** Provider.Assembly or Provider.Type is NullOrWhiteSpace>
+
+> **System.ArgumentNullException:** ClientContext is Null>
+
+
+#### ExecuteExtensibilityExtractionCallOut(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.ExtensibilityHandler,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate,OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.ProvisioningTemplateCreationInformation,OfficeDevPnP.Core.Diagnostics.PnPMonitoredScope)
+Ensure the ClientContext is not disposed in the custom provider.
+Method to Invoke Custom Extraction Handlers.
+> ##### Parameters
+> **ctx:** Authenticated ClientContext that is passed to the custom provider.
+
+> **handler:** A custom Extensibility Provisioning Provider
+
+> **template:** ProvisioningTemplate that is passed to the custom provider
+
+> **creationInformation:** The Provisioning Template creation information object
+
+> **scope:** The PnPMonitoredScope of the current step in the pipeline
+
+> ##### Exceptions
+> **OfficeDevPnP.Core.Framework.Provisioning.Extensibility.ExtensiblityPipelineException:** 
+
+> **System.ArgumentException:** Provider.Assembly or Provider.Type is NullOrWhiteSpace>
+
+> **System.ArgumentNullException:** ClientContext is Null>
+
+
+## Core.Framework.Provisioning.Extensibility.IProvisioningExtensibilityProvider
+            
+Defines a interface that accepts requests from the provisioning processing component
+        
+### Methods
+
+
+#### ProcessRequest(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate,System.String)
+Defines a interface that accepts requests from the provisioning processing component
+> ##### Parameters
+> **ctx:** 
+
+> **template:** 
+
+> **configurationData:** 
+
+
+## Core.Framework.Provisioning.Extensibility.ExtensiblityPipelineException
+            
+Initializes a new instance of the ExtensiblityPipelineException class. This Exception occurs when there is an exception invoking a custom Extensibility Providers
+        
+### Methods
+
+
+#### Constructor
+Initializes a new instance of the ExtensiblityPipelineException class with a system supplied message
+
+#### Constructor
+Initializes a new instance of the ExtensiblityPipelineException class with the specified message string.
+> ##### Parameters
+> **message:** A string that describes the exception.
+
+
+#### Constructor
+Initializes a new instance of the ExtensiblityPipelineException class with a specified error message and a reference to the inner exception that is the cause of this exception.
+> ##### Parameters
+> **message:** A string that describes the exception.
+
+> **innerException:** The exception that is the cause of the current exception.
+
+
+#### Constructor
+Initializes a new instance of the ExtensiblityPipelineException class from serialized data.
+> ##### Parameters
+> **info:** The object that contains the serialized data.
+
+> **context:** The stream that contains the serialized data.
+
+> ##### Exceptions
+> **System.ArgumentNullException:** The info parameter is null.-or-The context parameter is null.
+
+
+## Core.Framework.Provisioning.Extensibility.IProvisioningExtensibilityTokenProvider
+            
+Defines an interface which allows to plugin custom TokenDefinitions to the template provisioning pipeline
+        
+### Methods
+
+
+#### GetTokens(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate,System.String)
+Provides Token Definitions to the template provisioning pipeline
+> ##### Parameters
+> **ctx:** 
+
+> **template:** 
+
+> **configurationData:** 
+
+
+## Core.Framework.Provisioning.Extensibility.IProvisioningExtensibilityHandler
+            
+Defines an interface which allows to plugin custom Provisioning Extensibility Handlers to the template extraction/provisioning pipeline
+        
+### Methods
+
+
+#### Provision(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate,OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.ProvisioningTemplateApplyingInformation,OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenParser,OfficeDevPnP.Core.Diagnostics.PnPMonitoredScope,System.String)
+Execute custom actions during provisioning of a template
+> ##### Parameters
+> **ctx:** The target ClientContext
+
+> **template:** The current Provisioning Template
+
+> **applyingInformation:** The Provisioning Template application information object
+
+> **scope:** The PnPMonitoredScope of the current step in the pipeline
+
+> **configurationData:** The configuration data, if any, for the handler
+
+
+#### Extract(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate,OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.ProvisioningTemplateCreationInformation,OfficeDevPnP.Core.Diagnostics.PnPMonitoredScope,System.String)
+Execute custom actions during extraction of a template
+> ##### Parameters
+> **ctx:** The target ClientContext
+
+> **template:** The current Provisioning Template
+
+> **creationInformation:** The Provisioning Template creation information object
+
+> **scope:** The PnPMonitoredScope of the current step in the pipeline
+
+> **configurationData:** The configuration data, if any, for the handler
+
+> ##### Return value
+> The Provisioning Template eventually enriched by the handler during extraction
+
 ## Core.Framework.Provisioning.Model.ComposedLook
             
 Domain Object that defines a Composed Look in the Provision Template
@@ -6911,6 +7275,8 @@ Domain Object for the Provisioning Template
         
 ### Properties
 
+#### Providers
+Gets a collection of Providers that are used during the extensibility pipeline
 #### Parameters
 Any parameters that can be used throughout the template
 #### Id
@@ -6933,8 +7299,6 @@ Gets or sets CustomActions for the template
 Gets a collection of files for the template
 #### ComposedLook
 Gets or Sets the composed look of the template
-#### Providers
-Gets a collection of Providers that are used during the extensibility pipeline
 #### Pages
 Gets a collection of Wiki Pages for the template
 #### TermGroups
@@ -7035,6 +7399,11 @@ Gets or sets a value that specifies the URI of a file which contains the ECMAScr
 A Collection of CustomActions at the Site level
 #### 
 A Collection of CustomActions at the Web level
+
+## Core.Framework.Provisioning.Model.ExtensibilityHandler
+            
+Domain Object for Extensiblity Call out
+        
 
 ## Core.Framework.Provisioning.Model.FeatureCollection
             
@@ -7292,6 +7661,11 @@ Collection of Page objects
 ## Core.Framework.Provisioning.Model.PropertyBagEntryCollection
             
 Collection of PropertyBagEntry objects
+        
+
+## Core.Framework.Provisioning.Model.ExtensibilityHandlerCollection
+            
+Collection of ExtensibilityHandler objects
         
 
 ## Core.Framework.Provisioning.Model.ProviderCollection
@@ -7667,120 +8041,10 @@ Defines the Status Field Name of the Workflow Subscription
 Defines a collection of objects of type WorkflowSubscription
         
 
-## Core.Framework.Provisioning.ObjectHandlers.ObjectExtensibilityProviders
+## Core.Framework.Provisioning.ObjectHandlers.ObjectExtensibilityHandlers
             
 Extensibility Provider CallOut
         
-
-## Core.Framework.Provisioning.Extensibility.ExtensibilityManager
-            
-Provisioning Framework Component that is used for invoking custom providers during the provisioning process.
-        
-### Methods
-
-
-#### ExecuteTokenProviderCallOut(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.Provider,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate)
-Method to Invoke Custom Provisioning Token Providers which implement the IProvisioningExtensibilityTokenProvider interface. Ensure the ClientContext is not disposed in the custom provider.
-> ##### Parameters
-> **ctx:** Authenticated ClientContext that is passed to the custom provider.
-
-> **provider:** A custom Extensibility Provisioning Provider
-
-> **template:** ProvisioningTemplate that is passed to the custom provider
-
-> ##### Exceptions
-> **OfficeDevPnP.Core.Framework.Provisioning.Extensibility.ExtensiblityPipelineException:** 
-
-> **System.ArgumentException:** Provider.Assembly or Provider.Type is NullOrWhiteSpace>
-
-> **System.ArgumentNullException:** ClientContext is Null>
-
-
-#### ExecuteExtensibilityCallOut(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.Provider,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate)
-Method to Invoke Custom Provisioning Providers. Ensure the ClientContext is not disposed in the custom provider.
-> ##### Parameters
-> **ctx:** Authenticated ClientContext that is passed to the custom provider.
-
-> **provider:** A custom Extensibility Provisioning Provider
-
-> **template:** ProvisioningTemplate that is passed to the custom provider
-
-> ##### Exceptions
-> **OfficeDevPnP.Core.Framework.Provisioning.Extensibility.ExtensiblityPipelineException:** 
-
-> **System.ArgumentException:** Provider.Assembly or Provider.Type is NullOrWhiteSpace>
-
-> **System.ArgumentNullException:** ClientContext is Null>
-
-
-## Core.Framework.Provisioning.Extensibility.ExtensiblityPipelineException
-            
-Initializes a new instance of the ExtensiblityPipelineException class. This Exception occurs when there is an exception invoking a custom Extensibility Providers
-        
-### Methods
-
-
-#### Constructor
-Initializes a new instance of the ExtensiblityPipelineException class with a system supplied message
-
-#### Constructor
-Initializes a new instance of the ExtensiblityPipelineException class with the specified message string.
-> ##### Parameters
-> **message:** A string that describes the exception.
-
-
-#### Constructor
-Initializes a new instance of the ExtensiblityPipelineException class with a specified error message and a reference to the inner exception that is the cause of this exception.
-> ##### Parameters
-> **message:** A string that describes the exception.
-
-> **innerException:** The exception that is the cause of the current exception.
-
-
-#### Constructor
-Initializes a new instance of the ExtensiblityPipelineException class from serialized data.
-> ##### Parameters
-> **info:** The object that contains the serialized data.
-
-> **context:** The stream that contains the serialized data.
-
-> ##### Exceptions
-> **System.ArgumentNullException:** The info parameter is null.-or-The context parameter is null.
-
-
-## Core.Framework.Provisioning.Extensibility.IProvisioningExtensibilityTokenProvider
-            
-Defines an interface which allows to plugin custom TokenDefinitions to the template provisioning pipleline
-        
-### Methods
-
-
-#### GetTokens(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate,System.String)
-Provides Token Definitions to the template provisioning pipeline
-> ##### Parameters
-> **ctx:** 
-
-> **template:** 
-
-> **configurationData:** 
-
-
-## Core.Framework.Provisioning.Extensibility.IProvisioningExtensibilityProvider
-            
-Defines a interface that accepts requests from the provisioning processing component
-        
-### Methods
-
-
-#### ProcessRequest(Microsoft.SharePoint.Client.ClientContext,OfficeDevPnP.Core.Framework.Provisioning.Model.ProvisioningTemplate,System.String)
-Defines a interface that accepts requests from the provisioning processing component
-> ##### Parameters
-> **ctx:** 
-
-> **template:** 
-
-> **configurationData:** 
-
 
 ## Core.Framework.Provisioning.Providers.ITemplateFormatter
             
@@ -12738,8 +13002,6 @@ The default namespace prefix of the target XML Namespace
 
 #### Rights
 
-#### RightsSpecified
-
 #### Url
 
 #### Enabled
@@ -12749,6 +13011,12 @@ The default namespace prefix of the target XML Namespace
 #### ImageUrl
 
 #### ScriptSrc
+
+#### RegistrationId
+
+#### RegistrationType
+
+#### RegistrationTypeSpecified
 
 #### 
 
@@ -12760,6 +13028,23 @@ The default namespace prefix of the target XML Namespace
 ### Properties
 
 #### Any
+
+
+## Core.Framework.Provisioning.Providers.Xml.V201512.RegistrationType
+            
+
+        
+### Fields
+
+#### None
+
+#### List
+
+#### ContentType
+
+#### ProgId
+
+#### FileType
 
 
 ## Core.Framework.Provisioning.Providers.Xml.V201512.File
