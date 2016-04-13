@@ -46,7 +46,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             XDocument xml = XDocument.Load(template);
 
             // Load the XSD embedded resource
-            Stream stream = typeof(XMLPnPSchemaV201508Formatter)
+            Stream stream = typeof(XMLPnPSchemaV201512Formatter)
                 .Assembly
                 .GetManifestResourceStream("OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.ProvisioningSchema-2015-12.xsd");
 
@@ -646,8 +646,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                              ImageUrl = customAction.ImageUrl,
                              Location = customAction.Location,
                              Name = customAction.Name,
-                             Rights = customAction.Rights != null ? customAction.Rights.FromBasePermissionsToString() : null,
-                             RightsSpecified = true,
+                             Rights = customAction.Rights.FromBasePermissionsToString(),
+                             RegistrationId = customAction.RegistrationId,
+                             RegistrationType = (RegistrationType)Enum.Parse(typeof(RegistrationType), customAction.RegistrationType.ToString(), true),
+                             RegistrationTypeSpecified = true,
                              ScriptBlock = customAction.ScriptBlock,
                              ScriptSrc = customAction.ScriptSrc,
                              Sequence = customAction.Sequence,
@@ -678,8 +680,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                              ImageUrl = customAction.ImageUrl,
                              Location = customAction.Location,
                              Name = customAction.Name,
-                             Rights = customAction.Rights != null ? customAction.Rights.FromBasePermissionsToString() : null,
-                             RightsSpecified = true,
+                             Rights = customAction.Rights.FromBasePermissionsToString(),
+                             RegistrationId = customAction.RegistrationId,
+                             RegistrationType = (RegistrationType)Enum.Parse(typeof(RegistrationType), customAction.RegistrationType.ToString(), true),
+                             RegistrationTypeSpecified = true,
                              ScriptBlock = customAction.ScriptBlock,
                              ScriptSrc = customAction.ScriptSrc,
                              Sequence = customAction.Sequence,
@@ -1019,10 +1023,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             #region Providers
 
             // Translate Providers, if any
-            if (template.Providers != null && template.Providers.Count > 0)
+            if ((template.Providers != null && template.Providers.Count > 0) || (template.ExtensibilityHandlers != null && template.ExtensibilityHandlers.Count > 0))
             {
+                var extensibilityHandlers = template.ExtensibilityHandlers.Union(template.Providers);
                 result.Providers =
-                    (from provider in template.Providers
+                    (from provider in extensibilityHandlers
                      select new V201512.Provider
                      {
                          HandlerType = String.Format("{0}, {1}", provider.Type, provider.Assembly),
@@ -1557,9 +1562,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                             ImageUrl = customAction.ImageUrl,
                             Location = customAction.Location,
                             Name = customAction.Name,
-                            Rights = customAction.RightsSpecified ? customAction.Rights.ToBasePermissions() : new BasePermissions(),
+                            Rights = customAction.Rights.ToBasePermissions(),
                             ScriptBlock = customAction.ScriptBlock,
                             ScriptSrc = customAction.ScriptSrc,
+                            RegistrationId = customAction.RegistrationId,
+                            RegistrationType = (UserCustomActionRegistrationType)Enum.Parse(typeof(UserCustomActionRegistrationType), customAction.RegistrationType.ToString(), true),
+                            // Remove = MISSING IN THE SCHEMA!,
                             Sequence = customAction.SequenceSpecified ? customAction.Sequence : 100,
                             Title = customAction.Title,
                             Url = customAction.Url,
@@ -1579,9 +1587,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                             ImageUrl = customAction.ImageUrl,
                             Location = customAction.Location,
                             Name = customAction.Name,
-                            Rights = customAction.RightsSpecified ? customAction.Rights.ToBasePermissions() : new BasePermissions(),
+                            Rights = customAction.Rights.ToBasePermissions(),
                             ScriptBlock = customAction.ScriptBlock,
                             ScriptSrc = customAction.ScriptSrc,
+                            RegistrationId = customAction.RegistrationId,
+                            RegistrationType = (UserCustomActionRegistrationType)Enum.Parse(typeof(UserCustomActionRegistrationType), customAction.RegistrationType.ToString(), true),
+                            // Remove = MISSING IN THE SCHEMA!,
                             Sequence = customAction.SequenceSpecified ? customAction.Sequence : 100,
                             Title = customAction.Title,
                             Url = customAction.Url,
@@ -1847,8 +1858,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                         var handlerType = Type.GetType(provider.HandlerType, false);
                         if (handlerType != null)
                         {
-                            result.Providers.Add(
-                                new Model.Provider
+                            result.ExtensibilityHandlers.Add(
+                                new Model.ExtensibilityHandler
                                 {
                                     Assembly = handlerType.Assembly.FullName,
                                     Type = handlerType.FullName,
